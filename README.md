@@ -1,6 +1,6 @@
 # CoffeeNChill Canteen Management System
 
-A cloud-based Canteen Management System for CoffeeNChill, built with Azure Functions, Azure Table Storage, and Azure File Share (via Azurite emulation locally). Part 1 delivers the cloud foundation for menu management and staff document handling.
+A cloud-based Canteen Management System for CoffeeNChill, built with Azure Functions, Azure Table Storage, and Azure Blob Storage (via Azurite emulation locally). Part 1 delivers the cloud foundation for menu management and staff document handling.
 
 ---
 
@@ -9,7 +9,7 @@ A cloud-based Canteen Management System for CoffeeNChill, built with Azure Funct
 CoffeeNChill replaces paper menus and filing-cabinet documents with:
 
 - Menu Items stored dynamically in Azure Table Storage so prices and availability can be updated instantly across campus.
-- Staff Documents (barista recipe sheets, equipment cleaning manuals, health & safety policies) stored in a centralized Azure File Share.
+- Staff Documents (barista recipe sheets, equipment cleaning manuals, health & safety policies) stored in a centralized Azure Blob Storage container.
 
 The system runs locally in isolated Docker containers via Azurite emulation, and the Azure Functions app is containerized and published to Docker Hub.
 
@@ -108,9 +108,9 @@ docker logs coffeenchill-azurite
 | Cold Drinks | DRK-001 | Iced Coffee         | 32.00 | true      |
 | Pastries    | PAS-001 | Chocolate Croissant | 28.00 | true      |
 
-### Azure File Share: staff-docs
+### Azure Blob Storage: staff-docs
 
-Stores operational staff documents (PDFs, manuals, policies). Note: Azurite does not support Azure File Shares, so a live Azure Storage account is used for this service during development. The connection string is stored under the FileShareStorage key in local.settings.json.
+Stores operational staff documents (PDFs, manuals, policies). The Blob container is created automatically on first run via `CreateIfNotExists()` in the function constructors, and is fully supported by Azurite.
 
 ---
 
@@ -122,8 +122,7 @@ In CoffeeNChill/local.settings.json (not committed to Git):
   "IsEncrypted": false,
   "Values": {
     "AzureWebJobsStorage": "UseDevelopmentStorage=true",
-    "FUNCTIONS_WORKER_RUNTIME": "dotnet-isolated",
-    "FileShareStorage": "<YOUR_AZURE_STORAGE_CONNECTION_STRING>"
+    "FUNCTIONS_WORKER_RUNTIME": "dotnet-isolated"
   }
 }
 
@@ -169,7 +168,7 @@ docker run -p 10000:10000 -p 10001:10001 -p 10002:10002 mikhail10x/coffeenchill-
 
 ### Run Functions Container
 
-docker run -p 7071:80 -e AzureWebJobsStorage="UseDevelopmentStorage=true" -e FileShareStorage="<YOUR_AZURE_STORAGE_CONNECTION_STRING>" mikhail10x/coffeenchill-functions:v1.0
+docker run -p 7071:80 -e AzureWebJobsStorage="UseDevelopmentStorage=true" mikhail10x/coffeenchill-functions:v1.0
 
 The Functions container is published to Docker Hub as mikhail10x/coffeenchill-functions:v1.0.
 
@@ -209,7 +208,7 @@ curl http://localhost:7089/api/documents/download/test.txt
 
 | Member            | Responsibilities                                                                 |
 | ----------------- | -------------------------------------------------------------------------------- |
-| Mikhail Govender  | Azure Storage & Azurite setup, MenuItems table, staff-docs share, Docker Hub Azurite image |
+| Mikhail Govender  | Azure Storage & Azurite setup, MenuItems table, staff-docs container, Docker Hub Azurite image |
 | Abhay Sevprasad   | Menu API functions (5 CRUD endpoints) + Postman menu collection                  |
 | Brandon Devan     | Document API functions (3 endpoints) + Postman document collection + README      |
 | Lieshan Valliadum | Dockerfile for Functions app, merged Postman collection, YouTube video, final GitHub integration |
@@ -219,7 +218,7 @@ curl http://localhost:7089/api/documents/download/test.txt
 Mikhail Govender — Azure Storage & Azurite
 - Configured Azurite via Docker with persistent local storage.
 - Created the MenuItems table and seeded test entities.
-- Created the staff-docs File Share and uploaded a test document.
+- Created the staff-docs Blob container and uploaded a test document.
 - Verified connectivity via Docker logs and Azure Storage Explorer.
 - Tagged and published mikhail10x/coffeenchill-azurite:v1.0 to Docker Hub.
 - Authored the storage setup documentation in the README.
@@ -232,7 +231,7 @@ Abhay Sevprasad — Menu API
 
 Brandon Devan — Document API
 - Implemented 3 HTTP-triggered Azure Functions for staff document operations.
-- Integrated with Azure File Share (staff-docs) using the FileShareStorage connection string.
+- Integrated with Azure Blob Storage (staff-docs container) using the AzureWebJobsStorage connection.
 - Tested all endpoints locally with Postman and cURL.
 - Exported the Documents Postman collection.
 - Merged and authored the final README.
@@ -252,7 +251,7 @@ Screenshots captured during development include:
 
 1. Azurite Docker container running.
 2. MenuItems table with test entities.
-3. staff-docs File Share with a test document.
+3. staff-docs Blob container with a test document.
 4. Docker Hub repository showing v1.0 tags.
 5. Postman collection results for all 8 endpoints.
 
@@ -269,5 +268,5 @@ https://www.youtube.com/watch?v=XXXXXXXXXXX
 ## Notes
 
 - Azurite is used for local development and testing. It emulates Blob, Queue, and Table storage.
-- Azure File Share is not supported by Azurite; a live Azure Storage account is used for staff-docs during development.
+- The staff-docs Blob container is created automatically by the Functions app on first run.
 - local.settings.json is excluded from source control to protect connection strings.
