@@ -1,0 +1,36 @@
+{
+  "info": {
+    "_postman_id": "5414bcf1-118f-4bb6-ba8e-9d83e5403d5b",
+    "name": "CoffeeNChill Documents",
+    "description": "### Welcome to Postman! This is your first collection. \n\nCollections are your starting point for building and testing APIs. You can use this one to:\n\n• Group related requests\n• Test your API in real-world scenarios\n• Document and share your requests\n\nUpdate the name and overview whenever you’re ready to make it yours.\n\n[Learn more about Postman Collections.](https://learning.postman.com/docs/collections/collections-overview/)",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "_exporter_id": "58113275",
+    "_collection_link": "https://go.postman.co/collection/58113275-5414bcf1-118f-4bb6-ba8e-9d83e5403d5b?source=collection_link"
+  },
+  "item": [
+    {
+      "name": "Upload Staff Document",
+      "request": {
+        "method": "GET",
+        "header": []
+      },
+      "response": []
+    },
+    {
+      "name": "List Staff Documents",
+      "request": {
+        "method": "GET",
+        "header": []
+      },
+      "response": []
+    },
+    {
+      "name": "Download Staff Document",
+      "request": {
+        "method": "GET",
+        "header": []
+      },
+      "response": []
+    }
+  ]
+}
