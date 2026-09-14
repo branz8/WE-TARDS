@@ -257,11 +257,6 @@ Screenshots captured during development include:
 
 ---
 
-## Video Demonstration
-
-YouTube demonstration link:
-
-https://www.youtube.com/watch?v=XXXXXXXXXXX
 
 ---
 
