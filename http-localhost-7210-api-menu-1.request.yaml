@@ -1,0 +1,6 @@
+$kind: http-request
+name: http://localhost:7210/api/menu
+description: ""
+url: http://localhost:7210/api/menu
+method: GET
+order: 3579074099461749
