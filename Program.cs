@@ -1,20 +1,26 @@
-using Azure.Monitor.OpenTelemetry.Exporter;
 using Microsoft.Azure.Functions.Worker;
-using Microsoft.Azure.Functions.Worker.Builder;
-using Microsoft.Azure.Functions.Worker.OpenTelemetry;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using OpenTelemetry;
+using Azure.Data.Tables;
+using CoffeeNChill.Functions.Services;
 
-var builder = FunctionsApplication.CreateBuilder(args);
+var host = new HostBuilder()
+    .ConfigureFunctionsWebApplication()
+    .ConfigureServices(services =>
+    {
+        services.AddApplicationInsightsTelemetryWorkerService();
+        services.ConfigureFunctionsApplicationInsights();
 
-builder.ConfigureFunctionsWebApplication();
+        // Register Table Storage service
+        services.AddSingleton(provider =>
+        {
+            var connectionString = Environment.GetEnvironmentVariable("AzureWebJobsStorage")
+                ?? "UseDevelopmentStorage=true";
+            return new TableServiceClient(connectionString);
+        });
 
-if (!string.IsNullOrEmpty(Environment.GetEnvironmentVariable("APPLICATIONINSIGHTS_CONNECTION_STRING")))
-{
-    builder.Services.AddOpenTelemetry()
-        .UseFunctionsWorkerDefaults()
-        .UseAzureMonitorExporter();
-}
+        services.AddScoped<TableStorageService>();
+    })
+    .Build();
 
-builder.Build().Run();
+host.Run();

@@ -1,0 +1,32 @@
+$kind: http-request
+name: http://localhost:7210/api/menu
+description: |-
+  StartFragment
+
+  ```
+  {
+    "category": "Hot Drinks",
+    "id": "COF-001",
+    "name": "Espresso",
+    "description": "Rich and bold single shot espresso",
+    "price": 3.50,
+    "isAvailable": true
+  }
+
+   ```
+
+  EndFragment
+url: http://localhost:7210/api/menu
+method: POST
+body:
+  type: json
+  content: |-
+    {
+      "Category": "Hot Drinks",
+      "Id": "COF-001",
+      "Name": "Espresso",
+      "Description": "Rich and bold single shot espresso",
+      "Price": 3.50,
+      "IsAvailable": true
+    }
+order: 1789331284335
